@@ -76,11 +76,51 @@ def prop_BT(csp, newVar=None):
                 return False, []
     return True, []
 
+
+
 def prop_FC(csp, newVar=None):
     '''Do forward checking. That is check constraints with 
        only one uninstantiated variable. Remember to keep 
        track of all pruned variable,value pairs and return '''
 #IMPLEMENT
+    cons = csp.get_all_cons()
+    pruned = []
+    for con in cons:
+        if con.get_n_unasgn() == 1:
+            #check if dwo for the last var of the con
+            vars = con.get_unasgn_vars()
+            last_unasgn_var = vars[0]
+            if_dwo, pruned_from_one_con = fc_check(con, last_unasgn_var)
+            pruned.extend(pruned_from_one_con)
+            if if_dwo:
+                return False, pruned
+
+    return True, pruned
+
+
+def fc_check(con, var):
+    pruned = []
+    for d in var.cur_domain() :
+        #get assigned vars in con
+        vals = []
+        scope = con.get_scope()
+        for var in scope:
+            if var.is_assigned():
+                vals.append(var.get_assigned_value())
+            else:
+                vals.append(d)
+        if not con.check(vals):
+            var.prune_value(d)
+            pruned.append((var,d))
+
+    if var.cur_domain() == []:
+        # true means dwo occured
+        return True, pruned
+    else:
+        return False, pruned
+
+
+
 
 def prop_GAC(csp, newVar=None):
     '''Do GAC propagation. If newVar is None we do initial GAC enforce 

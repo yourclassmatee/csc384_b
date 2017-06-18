@@ -16,7 +16,7 @@ if __name__ == "__main__":
     import orderings as stu_orderings
     for b in boards:
         print("Solving board")
-        csp, var_array = kenken_csp(b)
+        csp, var_array = kenken_csp_model(b)
         solver = BT(csp)
         print("=======================================================")
         print("FC")
