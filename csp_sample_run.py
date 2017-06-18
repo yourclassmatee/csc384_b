@@ -98,13 +98,13 @@ def solve_nQueens(n, propType, trace=False):
     elif propType == 'GAC':
         solver.bt_search(prop_GAC)
         
-# #trace = True
+trace = True
 # trace = False
-# print("Plain Bactracking on 8-queens")
-# solve_nQueens(8, 'BT', trace)
-# print("=======================================================")
-# print("Forward Checking 8-queens")
-# solve_nQueens(8, 'FC', trace)
+print("Plain Bactracking on 8-queens")
+solve_nQueens(8, 'BT', trace)
+print("=======================================================")
+print("Forward Checking 8-queens")
+solve_nQueens(8, 'FC', trace)
 # print("=======================================================")
 # print("GAC 8-queens")
 # solve_nQueens(8, 'GAC', trace)
