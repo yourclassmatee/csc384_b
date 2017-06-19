@@ -53,4 +53,35 @@ def kenken_csp_model(kenken_grid):
 
     ##IMPLEMENT
     
+    #generate dom
+    size = kenken_grid[0][0]
+    dom = []
+    i=0
+    for i in range(1, size+1):
+      dom.append(i)
+
+    # generate vars
+    vars = []
+    for i in range(1, size+1):
+      for j in range(1, size+1):
+        vars.append(Variable('V{}{}'.format(i,j), dom))
+    
+    print ("end making vars")
+
+    #generate list of n list of 1-9
+    varDoms = []
+    for i in range(1, size+1):
+        each_dom = []
+        for j in range(1, size+1)
+            
+
+    sat_tuples = []
+    for t in itertools.product(*varDoms):
+        #NOTICE use of * to convert the list v to a sequence of arguments to product
+        if w_eq_sum_x_y_z(t):
+            sat_tuples.append(t)
+
+
+
+    #generate row all diff constraints
     
