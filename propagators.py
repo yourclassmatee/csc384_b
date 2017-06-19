@@ -59,7 +59,7 @@
 
          for gac we initialize the GAC queue with all constraints containing V.
    '''
-
+import itertools
 def prop_BT(csp, newVar=None):
     '''Do plain backtracking propagation. That is, do no 
     propagation at all. Just check fully instantiated constraints'''
@@ -131,29 +131,22 @@ def prop_GAC(csp, newVar=None):
        constraints containing newVar on GAC Queue'''
 #IMPLEMENT
     #prune all values of != assigned val of newVar
-    if (newVar != None):
-        if newVar.is_assigned() == True:
-            assigned_val = newVar.get_assigned_value()
-            for val in newVar.domain():
-                if (val != assigned_val):
-                    newVar.prune_value(val)
+    # if (newVar != None):
+    #     if newVar.is_assigned() == True:
+    #         assigned_val = newVar.get_assigned_value()
+    #         for val in newVar.domain():
+    #             if (val != assigned_val):
+    #                 newVar.prune_value(val)
 
     # add all c to gac queue
     cons = []
     if (newVar != None):
-        cons.extend(csp.get_cons_with_var(newVar));
+        cons.extend(csp.get_cons_with_var(newVar))
     else:
-        newVar.extend(csp.get_all_cons())
+        cons.extend(csp.get_all_cons())
     gac_queue = []
     gac_queue.extend(cons)
 
-    if_dwo, pruned = gac_enforce(gac_queue,csp)
-
-    if if_dwo :
-        return False, pruned
-    return True, pruned
-
-def gac_enforce(gac_queue,csp):
     pruned = []
     while gac_queue != []:
         con =gac_queue.pop()
@@ -162,26 +155,17 @@ def gac_enforce(gac_queue,csp):
                 if con.has_support(var, d):
                     continue
                 else:
-                    supports = find_assignments(con,d)
-                    # add to support
-                    con.add_satisfying_tuples(supports)
-                    if supports == []:
-                        # prune
-                        var.prune_value(d)
-                        pruned.append((var,d))
-                        #check if dwo
-                        if var.cur_domain_size() == 0:
-                            gac_queue.clear()
-                            return True, pruned
-                        else:
-                            cons_related = csp.get_cons_with_var(var)
-                            for con in cons_related:
-                                if con not in gac_queue:
-                                    gac_queue.append(con)
+                    # prune
+                    var.prune_value(d)
+                    pruned.append((var,d))
+                    #check if dwo
+                    if var.cur_domain_size() == 0:
+                        gac_queue.clear()
+                        return False, pruned
+                    else:
+                        cons_related = csp.get_cons_with_var(var)
+                        for adding_con in cons_related:
+                            if adding_con not in gac_queue:
+                                gac_queue.append(adding_con)
 
-    #end of while
     return True, pruned
-
-
-#def find_assignments(con,d):
-#    for vars in con.get_scope():
