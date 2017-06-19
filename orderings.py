@@ -30,4 +30,15 @@ def ord_mrv(csp):
     '''
 #IMPLEMENT
 
+    md = -1
+    mv = None
+    for v in csp.get_all_unasgn_vars():
+        if md < 0:
+            md = v.cur_domain_size()
+            mv = v
+        elif v.cur_domain_size() < md:
+            md = v.cur_domain_size()
+            mv = v
+    return mv
+
 

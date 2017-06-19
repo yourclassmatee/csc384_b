@@ -2,8 +2,8 @@ from kenken_csp import *
 from propagators import *
 from orderings import *
 
-test_ord_mrv = True;
-test_props = False;
+test_ord_mrv = False
+test_props = True
 
 boards = [ [[3],[11,21,3,0],[12,22,2,1],[13,23,33,6,3],[31,32,5,0]],
 [[4],[11,21,6,3],[12,13,3,0],[14,24,3,1],[22,23,7,0],[31,32,2,2],[33,43,3,1],[34,44,6,3],[41,42,7,0]],
