@@ -58,40 +58,84 @@ def kenken_csp_model(kenken_grid):
     dom = []
     i=0
     for i in range(1, size+1):
-      dom.append(i)
+        dom.append(i)
 
     # generate vars
     vars = []
     for i in range(1, size+1):
-      for j in range(1, size+1):
-        vars.append(Variable('V{}{}'.format(i,j), dom))
-    
-    print ("end making vars")
-
-    #generate list of n list of 1-9
-    varDoms = []
-    for i in range(1, size+1):
-        each_dom = []
+        each_row = []
         for j in range(1, size+1):
-            each_dom.append(j)
-        varDoms.append(each_dom)
-            
+            each_row.append(Variable('V{}{}'.format(i,j), dom))
+        vars.append(each_row)
+
     cons = []
-    #generate sat_tuples for all diff constraints
-    sat_tuples = []
-    for t in itertools.product(*varDoms):
-        #NOTICE use of * to convert the list v to a sequence of arguments to product
-        #if is_unique(t):
-        sat_tuples.append(t)
+    #add kenken constraints
+    for i in range(1, len(kenken_grid)):
+        each_cage = kenken_grid[i]
 
-    for i in range(1, size+1):
+        #generate list of lists for looping
         scope = []
-        for j in range(0, size):
-            scope.append(vars[(i-1)*size + j])
-        con = Constraint("C(row{})".format(i),scope)
+        varDoms = []
+        for j in range (0, len(each_cage)-2):
+            each_dom = []
+            for k in range(1, size+1):
+                each_dom.append(k)
+            varDoms.append(each_dom)
+            index1 = int(str(each_cage[j])[0])
+            index2 = int(str(each_cage[j])[1])
+            scope.append(vars[index1-1][index2-1])
+
+        sat_tuples = []
+        #iterate the cartesian product
+        for t in itertools.product(*varDoms):
+            if len(each_cage) > 2:
+                if check_kenken(t, each_cage[len(each_cage)-2], each_cage[len(each_cage)-1]):
+                    sat_tuples.append(t)
+            else:
+                if check_kenken_2(t, each_cage[len(each_cage)-1]):
+                    sat_tuples.append(t)
+
+        #make con
+        con = Constraint("C:cage{})".format(i), scope)
         con.add_satisfying_tuples(sat_tuples)
+        cons.append(con)
+
+
+    #make all binary constraints
+    for i in range(1, size+1):
+        print("bla")
 
 
 
 
-#def is_unique(t):
+
+def check_kenken(t, result, operator):
+    if operator == 0: #plus
+        sum = 0
+        for num in t:
+            sum += num
+        if sum == result:
+            return True
+        return False
+    elif operator == 1: #minus
+        if t[0] - t[1] == result or t[1] - t[0] == result:
+            return True
+        return False
+    elif operator == 2: #divide
+        if t[0] / t[1] == result or t[1] / t[0] == result:
+            return True
+        return False
+
+    elif operator == 3: #multiply
+        product = 1
+        for num in t:
+            product = product * num
+        if product == result:
+            return True
+        return False
+
+
+def check_kenken_2(t, result):
+    if t[0] != result:
+        return False
+    return True
