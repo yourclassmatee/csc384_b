@@ -102,8 +102,77 @@ def kenken_csp_model(kenken_grid):
 
 
     #make all binary constraints
-    for i in range(1, size+1):
-        print("bla")
+    for i in range(0, len(vars)):
+        row = vars[i]
+        for j in range(len(row)):
+            curr_var = row[j]
+            row_cons = make_row_cons(vars, curr_var, i, j)
+            col_cons = make_col_cons(vars, curr_var, i, j)
+            cons.extend(row_cons)
+            cons.extend(col_cons)
+
+    kenken_csp = CSP("kenkencsp:size{}".format(size))
+
+    #add all vars
+    for row in vars:
+        for v in row:
+            kenken_csp.add_var(v)
+
+    #add all constraints
+    for each_con in cons:
+        kenken_csp.add_constraint(each_con)
+
+    return kenken_csp, vars
+
+def make_row_cons(vars, curr_var, row_index, col_index):
+    row_cons_for_curvar = []
+    row_to_check = vars[row_index]
+    for i in range(0, len(row_to_check)):
+        if i <= col_index:
+            continue
+        else:
+            domains_to_check = []
+            domains_to_check.append(curr_var.domain())
+            domains_to_check.append(row_to_check[i].domain())
+            sat_tuples = []
+
+            for t in itertools.product(*domains_to_check):
+                if t[0] != t[1]:
+                    sat_tuples.append(t)
+            con = Constraint("C:V{}{}V{}{}".
+                format(row_index+1, col_index+1, row_index+1, i+1), [curr_var, row_to_check[i]])
+            con.add_satisfying_tuples(sat_tuples)
+            row_cons_for_curvar.append(con)
+
+    return row_cons_for_curvar
+
+def make_col_cons(vars, curr_var, row_index, col_index):
+    col_cons_for_curvar = []
+    col_vars_to_check = []
+    #get all vars to check
+    for row in vars:
+        col_vars_to_check.append(row[col_index])
+
+    for i in range(len(col_vars_to_check)):
+        if i <= row_index:
+            continue
+        else:
+            domains_to_check = []
+            domains_to_check.append(curr_var.domain())
+            domains_to_check.append(col_vars_to_check[i].domain())
+            sat_tuples = []
+
+            for t in itertools.product(*domains_to_check):
+                if t[0] != t[1]:
+                    sat_tuples.append(t)
+            con = Constraint("C:V{}{}V{}{}".
+                format(row_index+1, col_index+1, i+1, col_index+1), [curr_var, col_vars_to_check[i]])
+            con.add_satisfying_tuples(sat_tuples)
+            col_cons_for_curvar.append(con)
+
+    return col_cons_for_curvar
+
+
 
 
 
