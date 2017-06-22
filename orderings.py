@@ -30,11 +30,12 @@ def ord_mrv(csp):
     '''
 #IMPLEMENT
     vars = csp.get_all_unasgn_vars()
+
+    if vars == []:
+        return None
+
     min_var = vars[0]
     min_d = min_var.cur_domain_size()
-
-    if len(vars) <= 1:
-        return min_var
 
     for i in range(1, len(vars)):
         if vars[i].cur_domain_size() < min_d:
