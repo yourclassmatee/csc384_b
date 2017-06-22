@@ -187,14 +187,21 @@ def check_kenken(t, result, operator):
             return True
         return False
     elif operator == 1: #minus
-        if t[0] - t[1] == result or t[1] - t[0] == result:
-            return True
+        for perms in itertools.permutations(t):
+            curr_result = perms[0]
+            for i in range(1,len(perms)):
+                curr_result = curr_result-perms[i]
+            if curr_result == result:
+                return True
         return False
     elif operator == 2: #divide
-        if t[0] / t[1] == result or t[1] / t[0] == result:
-            return True
+        for perms in itertools.permutations(t):
+            curr_result = perms[0]
+            for i in range(1,len(perms)):
+                curr_result = curr_result/perms[i]
+            if curr_result == result:
+                return True
         return False
-
     elif operator == 3: #multiply
         product = 1
         for num in t:
