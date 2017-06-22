@@ -173,11 +173,6 @@ def make_col_cons(vars, curr_var, row_index, col_index):
     return col_cons_for_curvar
 
 
-
-
-
-
-
 def check_kenken(t, result, operator):
     if operator == 0: #plus
         sum = 0
